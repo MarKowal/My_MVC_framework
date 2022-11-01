@@ -16,6 +16,7 @@ class Router{
     public function add($route, $params = []){
         $route = preg_replace('/\//', '\\/', $route);
         $route = preg_replace('/\{([a-z]+)\}/', '(?P<\1>[a-z-]+)', $route);
+        $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
         $route = '/^'.$route.'$/i';
         $this->routes[$route] = $params;
     }
@@ -37,6 +38,7 @@ class Router{
 
     //teraz z uzyciem regex:
     public function match($url){
+        $url = trim($url, "/");
         foreach($this->routes as $route=>$params){
             if(preg_match($route, $url, $matches)){
                 foreach($matches as $key=>$match){
@@ -57,7 +59,6 @@ class Router{
 
     public function dispatch($url){
         $url = $this->removeQueryStringVariables($url);
-
         if ($this->match($url)){
             $controller = $this->params['controller'];
             $controller = $this->convertToStudlyCaps($controller);
@@ -85,7 +86,7 @@ class Router{
     }
 
     protected function convertToStudlyCaps($string){
-        return str_replace(' ', '', ucwords(str_replace('-', '', $string)));
+        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
     }
 
     protected function convertToCamelCase($string){
@@ -101,8 +102,7 @@ class Router{
             } else {
                 $url = '';
             }
-            return $url;
-        }
+        } return $url;
     }
 
     protected function getNamespace(){

@@ -6,6 +6,11 @@
 //require '../App/Controllers/Posts.php';
 //require '../Core/Router.php';
 
+//Twig:
+require_once dirname(__DIR__).'/vendor/autoload.php';
+//Twig_Autoloader::register();
+
+
 //Autoloader:
 spl_autoload_register(function($class){
     $root = dirname(__DIR__); //get the parent directory
@@ -46,7 +51,6 @@ if ($router->match($url)){
 }*/
 
 $router->dispatch($_SERVER['QUERY_STRING']);
-
 
 
 ?>
